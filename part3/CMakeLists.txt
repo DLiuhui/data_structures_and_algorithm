@@ -1,7 +1,13 @@
 cmake_minimum_required(VERSION 3.1)
 project(DS_PART3)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -g")
+if(${CMAKE_BUILD_TYPE} MATCHES Debug)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -g")
+    message("Using [Debug] mode")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    message("Not using [Debug] mode")
+endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
@@ -14,5 +20,5 @@ set(LIB "../lib/dsexceptions.h")
 set(SOURCE
         ${DEMO}Test.cpp
         ${DEMO}.h
-        ${LIB})
+        ${LIB} list.h)
 add_executable(${DEMO} ${SOURCE})

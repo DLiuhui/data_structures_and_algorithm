@@ -5,8 +5,7 @@
 
 #define CHECK
 
-#include <stdio.h>
-
+#include <cstdio>
 #include <algorithm>
 
 #include "../lib/dsexceptions.h"
@@ -47,15 +46,18 @@ namespace DS
             the_size_{rhs.the_size_}, the_capacity_{rhs.the_capacity_},
             array_{rhs.array_}
         {
+            // 由于是移动构造函数，所以rhs得array被完全交付给新的类对象
+            // 需要将临时类对象rhs.array_置空
             rhs.array_ = nullptr;
         }
 
         Vector& operator= (Vector&& rhs) noexcept
         {
+            // 由于是移动赋值，当前对象得成员值被交换到临时对象rhs
+            // 交换结束后，rhs.array_不置空，因为需要rhs得析构函数去清理rhs的array_
             std::swap(the_size_, rhs.the_size_);
             std::swap(the_capacity_, rhs.the_capacity_);
             std::swap(array_, rhs.array_);
-            rhs.array_ = nullptr;
             printf("Call move =\n");
             return *this;
         }
