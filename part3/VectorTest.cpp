@@ -1,13 +1,11 @@
 //
 // Created by DDRHb on 2019/8/25.
 //
-#include <stdio.h>
-
+#include "Vector.h"
+#include <cstdio>
 #include <iostream>
 #include <algorithm>
 #include <ctime>
-
-#include "Vector.h"
 
 using std::cin;
 using std::cout;

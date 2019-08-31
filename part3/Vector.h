@@ -151,7 +151,7 @@ namespace DS
         { return &array_[0]; }
         iterator end()  // 返回最后一个元素的后一个
         { return &array_[size()]; }
-        iterator cend() const
+        const_iterator cend() const
         { return &array_[size()]; }
 
 
