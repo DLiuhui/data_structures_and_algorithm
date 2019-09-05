@@ -21,7 +21,7 @@ namespace DS
         { stack_.push_back(x); }
 
         const Object& top() const
-        { stack_.back(); }
+        { return stack_.back(); }
 
         void pop()
         { stack_.pop_back(); }

@@ -76,10 +76,10 @@ namespace DS
                 return old;
             }
 
-            bool operator==(const_iterator& rhs) const
+            bool operator==(const const_iterator& rhs) const
             { return current_ == rhs.current_; }
 
-            bool operator!=(const_iterator& rhs) const
+            bool operator!=(const const_iterator& rhs) const
             { return current_ != rhs.current_; }
 
         protected:
@@ -88,7 +88,7 @@ namespace DS
             Object& retrieve() const
             { return current_->data_; }
 
-            explicit const_iterator(Node* p):
+            const_iterator(Node* p):
                 current_{p}
             {}
         };
@@ -138,7 +138,7 @@ namespace DS
             { return !(*this == rhs); }
 
         protected:
-            explicit iterator(Node* p):
+            iterator(Node* p):
                 const_iterator{p}
             {}
         };
@@ -160,6 +160,9 @@ namespace DS
         List(const List& rhs):
             the_size_{0}, head_{new Node}, tail_{new Node}
         {
+            // 拷贝构造函数需要对头尾指针进行初处理
+            head_->next_ = tail_;
+            tail_->prev_ = head_;
             for(auto& x : rhs)
                 push_back(x);
         }
@@ -192,14 +195,14 @@ namespace DS
         iterator begin()
         { return iterator(head_->next_); }
 
-        const_iterator cbegin() const
+        const_iterator begin() const
         { return const_iterator(head_->next_); }
 
         // 返回末尾元素后一个
         iterator end()
         { return iterator(tail_); }
 
-        const_iterator cend() const
+        const_iterator end() const
         { return const_iterator(tail_); }
 
         int size() const

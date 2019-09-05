@@ -23,9 +23,8 @@ void removeEveryOtherItem(Container& lst)
     }
 }
 
-// 由于List实现存在缺陷（与标准库相比），所以Container之前暂时未加const
 template <typename Container>
-void print(Container& c, std::ostream& out = cout)
+void print(const Container& c, std::ostream& out = cout)
 {
     if(c.empty())
         out << "(empty)" << endl;
@@ -34,7 +33,9 @@ void print(Container& c, std::ostream& out = cout)
         auto itr = c.begin();
         out << "[ " << *itr++;
         while(itr != c.end())
+        {
             out << ", " << *itr++;
+        }
         out << " ]" << endl;
     }
 }

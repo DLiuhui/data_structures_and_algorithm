@@ -19,39 +19,37 @@ using DS::Queue;
 
 static const int NUMS_PER_LINE = 14;
 
-
 template <typename Collection>
-void printCollection( const Collection & c )
+void printCollection(const Collection& c)
 {
-    cout << "Collection contains: " << c.size( ) << " items" << endl;
+    cout << "Collection contains: " << c.size() << " items" << endl;
     int i = 1;
 
-    if( c.empty( ) )
+    if(c.empty())
         cout << "Empty container." << endl;
     else
     {
-        for( auto x : c  )
+        for(auto x : c)
         {
             cout << x << " ";
-            if( i++ % NUMS_PER_LINE == 0 )
+            if(i++ % NUMS_PER_LINE == 0)
                 cout << endl;
         }
         cout << endl;
 
-        if( c.size( ) > NUMS_PER_LINE )
+        if(c.size() > NUMS_PER_LINE)
             return;
         cout << "In reverse: " << endl;
-        for( auto ritr = end( c ); ritr != begin( c ); )
-            cout << *--ritr << " ";
+        for(auto ritr = std::end( c ); ritr != std::begin( c );)
+            cout << *(--ritr) << " ";
         cout << endl << endl;
     }
 }
 
-
 int jos( int people, int passes, List<int> & order )
 {
     List<int> theList;
-    List<int>::iterator p = begin( theList );
+    List<int>::iterator p = std::begin( theList );
     List<int>::iterator tmp;
     Stack<int> s;
     Queue<int> q;
@@ -65,95 +63,90 @@ int jos( int people, int passes, List<int> & order )
     while( people-- != 1 )
     {
         for( i = 0; i < passes; ++i )
-            if( ++p == end( theList ) )
-                p = begin( theList );
+            if( ++p == std::end( theList ) )
+                p = std::begin( theList );
 
         order.push_back( *p );
         s.push( *p );
-        q.enqueue( *p );
+        q.enQueue( *p );
         tmp = p;
-        if( ++p == end( theList ) )
-            p = begin( theList);
+        if( ++p == std::end( theList ) )
+            p = std::begin( theList);
         theList.erase( tmp );
     }
 
     if( order.size( ) % 2 == 0 )
     {
         s.push( 0 );
-        q.enqueue( 0 );
+        q.enQueue( 0 );
     }
 
-    while( !s.isEmpty( ) && !q.isEmpty( ) )
+    while( !s.empty( ) && !q.empty( ) )
     {
         int x, y;
-        s.pop( x );
-        q.dequeue( y );
+        s.pop();
+        x = s.top();
+        q.deQueue();
+        y = q.front();
         if( x == y )
             cout << "Middle removed is " << x << endl;
     }
     cout << "Only unremoved is ";
-    return *begin( theList );
+    return *std::begin( theList );
 }
 
-
-void nonsense( int people, int passes )
+void print(const Vector<List<int>>& arr)
 {
-    List<int> lastFew, theList;
-
-    cout << jos( people, passes, lastFew ) << endl;
-
-    cout << "(Removal order) ";
-    printCollection( lastFew );
-}
-
-
-class CompareList
-{
-public:
-    bool operator() ( const List<int> & lhs, const List<int> & rhs ) const
-    { return lhs.size( ) < rhs.size( ); }
-};
-
-// Call by value, to test copy constructor
-void print( const Vector<List<int>> arr )
-{
-    int N = arr.size( );
-
-    for( int i = 0; i < N; ++i )
+    int n_total = arr.size();
+    for(int i = 0; i < n_total; ++i)
     {
         cout << "arr[" << i << "]:";
-
-        for( auto x : arr[ i ] )
+        for(auto x : arr[i])
             cout << " " << x;
-
         cout << endl;
     }
 }
 
-int main( )
+void nonsense(int people, int passes)
+{
+    List<int> last_few, the_list;
+    cout << jos(people, passes, last_few) << endl;
+
+    cout << "(Removal order)";
+    printCollection(last_few);
+}
+
+// 定义自己的比较函数
+class CompareList
+{
+public:
+    bool operator() (const List<int>& lhs, const List<int>& rhs) const
+    { return lhs.size() < rhs.size(); }
+};
+
+int main()
 {
     const int N = 20;
-    Vector<List<int>> arr( N );
+    Vector<List<int>> arr(N);
     List<int> lst;
 
-    for( int i = N - 1; i > 0; --i )
+    for(int i = N - 1; i > 0; --i)
     {
-        lst.push_front( i );
-        arr[ i ] = lst;
+        lst.push_back(i);
+        arr[i] = lst;
     }
 
-    print( arr );
+    print(arr);
 
-    clock_t start = clock( );
-    std::sort( begin( arr ), end( arr ), CompareList{ } );
-    clock_t end = clock( );
-    cout << "Sorting time: " << ( end - start ) << endl;
+    clock_t start = clock();
+    std::sort(std::begin(arr), std::end(arr), CompareList{});
+    clock_t end = clock();
+    cout << "Sorting time: " << (end - start) << endl;
 
-    print( arr );
+    print(arr);
 
-    nonsense( 12, 0 );
-    nonsense( 12, 1 );
-    //  nonsense( 3737, 37 );
+    nonsense(12, 0);
+    nonsense(12, 1);
 
     return 0;
 }
