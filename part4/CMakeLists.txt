@@ -19,3 +19,12 @@ set(SOURCE
         ${DEMO}.hpp
         ${LIB})
 add_executable(${DEMO} ${SOURCE})
+
+# avl_tree
+set(DEMO avl_tree)
+set(LIB ../lib/dsexceptions.h)
+set(SOURCE
+        ${DEMO}_test.cpp
+        ${DEMO}.hpp
+        ${LIB})
+add_executable(${DEMO} ${SOURCE})

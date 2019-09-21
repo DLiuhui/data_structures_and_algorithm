@@ -1,14 +1,14 @@
-//
-// Created by DDRHb on 2019/9/5.
-//
-#ifndef __BINARY_SEARCH_TREE_HPP__
-#define __BINARY_SEARCH_TREE_HPP__
+// 平衡树
+
+#ifndef __AVL_TREE_HPP__
+#define __AVL_TREE_HPP__
 
 #include "../lib/dsexceptions.h"
 #include <iostream>
 
-// BinarySearchTree ADT
-// 二叉搜索（排序）树
+// AVL Tree ADT
+// 二叉平衡树
+// 非优化平衡树，平衡调节通过旋转，每次插入删除均进行平衡调整
 // 需要实现的功能
 //
 // ******************PUBLIC OPERATIONS*********************
@@ -20,21 +20,14 @@
 // bool empty( )          --> Return true if empty; else false
 // void clear( )          --> Remove all items
 // void printTree( )      --> Print tree in sorted order
+// int height()           --> the height of the tree
 // ******************ERRORS********************************
 // Throws UnderflowException as warranted
-// 插入方案：
-//  插入的x > 节点值, 插入到右子树，x < 节点值, 插入到左子树，不考虑x = 节点值的情况
-// 删除节点方案：
-//  寻找x，如果没找到，什么都不做
-//  如果找到x
-//  如果x是叶节点，直接删除
-//  如果x不是叶节点，将x换成左子树的最大点（或者右子树的最小点）
-//  递归删除左子树最大点（右子树最小点）
 
 namespace DS
 {
     template <typename Object>
-    class BinarySearchTree
+    class AVLTree
     {
     private:
         class TreeNode
@@ -43,15 +36,26 @@ namespace DS
             Object element_;
             TreeNode* left_;
             TreeNode* right_;
+            int height_;
 
-            explicit TreeNode(const Object& element, TreeNode* lt = nullptr, TreeNode* rt = nullptr)
-                : element_{element}, left_{lt}, right_{rt}
+            explicit TreeNode(const Object& element, TreeNode* lt = nullptr, TreeNode* rt = nullptr, int h = 0)
+                : element_{element}, left_{lt}, right_{rt}, height_{h}
             {}
 
-            explicit TreeNode(Object&& element, TreeNode* lt = nullptr, TreeNode* rt = nullptr)
-                : element_{std::move(element)}, left_{lt}, right_{rt}
+            explicit TreeNode(Object&& element, TreeNode* lt = nullptr, TreeNode* rt = nullptr, int h = 0)
+                : element_{std::move(element)}, left_{lt}, right_{rt}, height_{h}
             {}
         };
+
+        // 返回节点node的高度
+        int height(TreeNode* node) const
+        { return (nullptr == node) ? -1 : node->height_; }
+
+        void adjustHeight(TreeNode*& node)
+        {
+            int h_l = height(node->left_), h_r = height(node->right_);
+            node->height_ = (h_l > h_r ? h_l : h_r) + 1;
+        }
 
         TreeNode* cloneTree(TreeNode* root) const
         {
@@ -120,8 +124,8 @@ namespace DS
             printTreeProcess(node->right_);
         }
 
-        // 由于需要永久修改节点指针指向的元素
-        // 所以采用TreeNode*&，指针的引用 / 或者 TreeNode**
+        // 在插入后进行平衡调整
+        // 递归进行平衡调整
         void insertProcess(const Object& x, TreeNode*& node)
         {
             if(node == nullptr)
@@ -130,10 +134,11 @@ namespace DS
                 insertProcess(x, node->right_);
             else if(x < node->element_)
                 insertProcess(x, node->left_);
+            balance(node);
         }
 
-        // 由于需要永久修改节点指针指向的元素
-        // 所以采用TreeNode*&，指针的引用 / 或者 TreeNode**
+        // 在插入后进行平衡调整
+        // 递归进行平衡调整
         void insertProcess(Object&& x, TreeNode*& node)
         {
             if(node == nullptr)
@@ -142,10 +147,11 @@ namespace DS
                 insertProcess(std::move(x), node->right_);
             else if(x < node->element_)
                 insertProcess(std::move(x), node->left_);
+            balance(node);
         }
 
-        // 由于需要永久修改节点指针指向的元素
-        // 所以采用TreeNode*&，指针的引用 / 或者 TreeNode**
+        // 在删除后进行平衡调整
+        // 递归进行平衡调整
         void removeProcess(const Object& x, TreeNode*& node)
         {
             if(node == nullptr)
@@ -170,39 +176,99 @@ namespace DS
                     //  递归删除左子树最大点（右子树最小点）
                     node->element_ = findMaxProcess(node->left_)->element_;
                     removeProcess(node->element_, node->left_);
-                    // node->element_ = findMinProcess(node->right_)->element_;
-                    // removeProcess(node->element_, node->right_);
                 }
             }
+            balance(node);
+        }
+
+        static const int ALLOWED_IMBALANCE = 1;
+
+        void balance(TreeNode*& node)
+        {
+            if(node == nullptr)
+                return;
+            if(height(node->left_) - height(node->right_) > ALLOWED_IMBALANCE) // 左端失衡
+            {
+                if(height(node->left_->left_) >= height(node->left_->right_)) // 左左，向右单次旋转
+                    rotateWithLeftChild(node);
+                else // 左右，双旋转 左旋->右旋
+                    doubleWithLeftChild(node);
+            }
+            else if(height(node->right_) - height(node->left_) > ALLOWED_IMBALANCE) // 右端失衡
+            {
+                if(height(node->right_->right_) >= height(node->right_->left_)) // 右右，向左单次旋转
+                    rotateWithRightChild(node);
+                else // 右左，双旋转 右旋->左旋
+                    doubleWithRightChild(node);
+            }
+            adjustHeight(node);
+        }
+
+        void rotateWithLeftChild(TreeNode*& root)
+        {
+            // new_root 作为新的 root
+            // root 作为 new_root->right
+            TreeNode* new_root = root->left_;
+            root->left_ = new_root->right_;
+            new_root->right_ = root;
+            // adjust height
+            adjustHeight(root); // 先调整 root(new_root的子树)
+            adjustHeight(new_root); // 再调整 new_root
+            root = new_root; // 修改parent指针
+        }
+
+        void rotateWithRightChild(TreeNode*& root)
+        {
+            // new_root 作为新的 root
+            // root 作为 new_root->left
+            TreeNode* new_root = root->right_;
+            root->right_ = new_root->left_;
+            new_root->left_ = root;
+            // adjust height
+            adjustHeight(root); // 先调整 root(new_root的子树)
+            adjustHeight(new_root); // 再调整 new_root
+            root = new_root; // 修改parent指针
+        }
+
+        void doubleWithLeftChild(TreeNode*& root)
+        {
+            rotateWithRightChild(root->left_);
+            rotateWithLeftChild(root);
+        }
+
+        void doubleWithRightChild(TreeNode*& root)
+        {
+            rotateWithLeftChild(root->right_);
+            rotateWithRightChild(root);
         }
 
         TreeNode* root_;
 
     public:
-        BinarySearchTree()
+        AVLTree()
             : root_{nullptr}
         {}
 
         // 拷贝，由于并没有使用智能指针，需要进行完全复制深拷贝clone
-        BinarySearchTree(const BinarySearchTree& rhs)
+        AVLTree(const AVLTree& rhs)
             : root_{nullptr}
         { root_ = cloneTree(rhs.root_); }
 
-        BinarySearchTree(BinarySearchTree&& rhs) noexcept
+        AVLTree(AVLTree&& rhs) noexcept
             : root_{rhs.root_}
         { rhs.root_ = nullptr; }
 
-        ~BinarySearchTree()
+        ~AVLTree()
         { clear(); }
 
-        BinarySearchTree& operator=(const BinarySearchTree& rhs)
+        AVLTree& operator=(const AVLTree& rhs)
         {
-            BinarySearchTree copy(rhs);
+            AVLTree copy(rhs);
             std::swap(*this, copy);
             return *this;
         }
 
-        BinarySearchTree& operator=(BinarySearchTree&& rhs) noexcept
+        AVLTree& operator=(AVLTree&& rhs) noexcept
         {
             std::swap(root_, rhs.root_);
             return *this;
@@ -265,4 +331,4 @@ namespace DS
         }
     };
 }
-#endif //__BINARY_SEARCH_TREE_HPP__
+#endif //__AVL_TREE_HPP__

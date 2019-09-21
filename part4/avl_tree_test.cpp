@@ -1,12 +1,12 @@
 #include <iostream>
-#include "binary_search_tree.hpp"
+#include "avl_tree.hpp"
 using namespace std;
-using DS::BinarySearchTree;
+using DS::AVLTree;
 
 // Test program
 int main()
 {
-    BinarySearchTree<int> t;
+    AVLTree<int> t;
     int NUMS = 20000;
     const int GAP = 37;
     int i;
@@ -34,7 +34,7 @@ int main()
             cout << "Find error2: " << i << endl;
     }
 
-    BinarySearchTree<int> t2;
+    AVLTree<int> t2;
     t2 = t;
 
     for(i = 2; i < NUMS; i += 2)
