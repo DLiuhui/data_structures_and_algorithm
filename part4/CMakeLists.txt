@@ -28,3 +28,8 @@ set(SOURCE
         ${DEMO}.hpp
         ${LIB})
 add_executable(${DEMO} ${SOURCE})
+
+# word_ladder: the use of map
+set(DEMO word_ladder)
+set(SOURCE ${DEMO}.cpp)
+add_executable(${DEMO} ${SOURCE})
