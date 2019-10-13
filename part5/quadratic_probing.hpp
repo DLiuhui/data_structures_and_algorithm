@@ -177,4 +177,4 @@ namespace DS
         }
     };
 }
-#endif //SEPARATE_CHAINING_HPP
+#endif //QUADRATIC_PROBING_HPP
