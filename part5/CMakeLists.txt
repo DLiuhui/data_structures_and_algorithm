@@ -21,3 +21,12 @@ set(SOURCE
         ${DEMO}.hpp
         ${LIB})
 add_executable(${DEMO} ${SOURCE})
+
+# quadratic probing 二次再探型
+set(DEMO quadratic_probing)
+set(LIB ../lib/dsexceptions.h)
+set(SOURCE
+        ${DEMO}_test.cpp
+        ${DEMO}.hpp
+        ${LIB})
+add_executable(${DEMO} ${SOURCE})

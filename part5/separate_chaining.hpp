@@ -99,7 +99,7 @@ namespace DS
             return true;
         }
 
-        bool insert(const Object&& x)
+        bool insert(Object&& x)
         {
             std::list<Object>& which_list = hash_table_[myHash(x)];
             if(myFind(which_list.begin(), which_list.end(), x) != which_list.end())
