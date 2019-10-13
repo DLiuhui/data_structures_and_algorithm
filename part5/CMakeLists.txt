@@ -30,3 +30,12 @@ set(SOURCE
         ${DEMO}.hpp
         ${LIB})
 add_executable(${DEMO} ${SOURCE})
+
+# cuckoo hash family
+set(DEMO cuckoo_hash)
+set(LIB ../lib)
+set(SOURCE
+        ${DEMO}_test.cpp
+        ${DEMO}.hpp
+        ${LIB})
+add_executable(${DEMO} ${SOURCE})
