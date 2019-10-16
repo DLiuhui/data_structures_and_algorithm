@@ -39,3 +39,8 @@ set(SOURCE
         ${DEMO}.hpp
         ${LIB})
 add_executable(${DEMO} ${SOURCE})
+
+# use_of_unordered_set
+set(DEMO use_of_unordered_set)
+set(SOURCE ${DEMO}.cpp)
+add_executable(${DEMO} ${SOURCE})

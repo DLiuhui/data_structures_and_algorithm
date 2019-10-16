@@ -7,7 +7,7 @@ using namespace DS;
 // Simple main
 int main()
 {
-    const int NUMS = 20000;
+    const int NUMS = 200000;
     const int GAP  =   37;
     const int ATTEMPTS = 1;
     int i;
