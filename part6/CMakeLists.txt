@@ -23,13 +23,13 @@ set(SOURCE
 add_executable(${DEMO} ${SOURCE})
 
 # leftist_heap 左式堆
-#set(DEMO quadratic_probing)
-#set(LIB ../lib/dsexceptions.h)
-#set(SOURCE
-#        ${DEMO}_test.cpp
-#        ${DEMO}.hpp
-#        ${LIB})
-#add_executable(${DEMO} ${SOURCE})
+set(DEMO left_heap)
+set(LIB ../lib)
+set(SOURCE
+        ${DEMO}_test.cpp
+        ${DEMO}.hpp
+        ${LIB})
+add_executable(${DEMO} ${SOURCE})
 
 # binomial_queue 二项队列
 #set(DEMO cuckoo_hash)
