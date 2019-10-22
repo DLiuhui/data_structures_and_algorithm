@@ -32,13 +32,13 @@ set(SOURCE
 add_executable(${DEMO} ${SOURCE})
 
 # binomial_queue 二项队列
-#set(DEMO cuckoo_hash)
-#set(LIB ../lib)
-#set(SOURCE
-#        ${DEMO}_test.cpp
-#        ${DEMO}.hpp
-#        ${LIB})
-#add_executable(${DEMO} ${SOURCE})
+set(DEMO binomial_queue)
+set(LIB ../lib)
+set(SOURCE
+        ${DEMO}_test.cpp
+        ${DEMO}.hpp
+        ${LIB})
+add_executable(${DEMO} ${SOURCE})
 
 # priority_queue 使用
 #set(DEMO use_of_unordered_set)
