@@ -41,6 +41,6 @@ set(SOURCE
 add_executable(${DEMO} ${SOURCE})
 
 # priority_queue 使用
-#set(DEMO use_of_unordered_set)
-#set(SOURCE ${DEMO}.cpp)
-#add_executable(${DEMO} ${SOURCE})
+set(DEMO priority_queue)
+set(SOURCE ${DEMO}_test.cpp)
+add_executable(${DEMO} ${SOURCE})
