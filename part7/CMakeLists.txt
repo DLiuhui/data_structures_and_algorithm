@@ -21,10 +21,9 @@ set(SOURCE
 add_executable(${DEMO} ${SOURCE})
 
 # radix_sort 基数排序
-#set(DEMO radix_sort)
-#set(LIB ../lib)
-#set(SOURCE
-#        ${DEMO}_test.cpp
-#        ${DEMO}.hpp
-#        ${LIB})
-#add_executable(${DEMO} ${SOURCE})
+set(DEMO radix_sort)
+set(LIB ../lib)
+set(SOURCE
+        ${DEMO}.cpp
+        ${LIB})
+add_executable(${DEMO} ${SOURCE})
