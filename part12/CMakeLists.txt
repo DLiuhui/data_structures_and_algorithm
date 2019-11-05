@@ -13,8 +13,18 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 # 高级数据结构
 # RedBlackTree
-# Treap
+
+# Treap 树堆
+set(DEMO treap)
+set(LIB ../lib)
+set(SOURCE
+        ${DEMO}.hpp
+        ${DEMO}_test.cpp
+        ${LIB})
+add_executable(${DEMO} ${SOURCE})
+
 # SuffixArray
+
 # KdTree k维搜索树
 set(DEMO kd_tree)
 set(LIB ../lib)
@@ -23,6 +33,7 @@ set(SOURCE
         ${DEMO}_test.cpp
         ${LIB})
 add_executable(${DEMO} ${SOURCE})
+
 # PairingHeap
 
 
