@@ -13,6 +13,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 # 高级数据结构
 # RedBlackTree 红黑树
+set(DEMO rb_tree)
+set(LIB ../lib)
+set(SOURCE
+        ${DEMO}.hpp
+        ${DEMO}_test.cpp
+        ${LIB})
+add_executable(${DEMO} ${SOURCE})
 
 # Treap 树堆
 set(DEMO treap)
