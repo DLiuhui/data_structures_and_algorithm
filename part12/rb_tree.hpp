@@ -213,6 +213,138 @@ namespace DS
             k1->parent_ = k2;
         }
 
+        void remove(const Object& x, TreeNode*& node)
+        {
+            if(node == nullptr)
+                return;
+            if(x == node->element_)
+            {
+                TreeNode* remove_node = nullptr;
+                TreeNode* adjust_node = nullptr;
+                if(node->left_ != nullptr && node->right_ != nullptr)
+                {
+                    remove_node = findSuccessor(node);
+                    node->element_ = remove_node->element_;
+                } else {
+                    remove_node = node;
+                }
+
+                if(remove_node->left_)
+                    adjust_node = remove_node->left_;
+                else
+                    adjust_node = remove_node->right_;
+
+                if(nullptr == remove_node->parent_)
+                    root_ = adjust_node;
+                else
+                {
+                    if(remove_node == remove_node->parent_->left_)
+                        remove_node->parent_->left_ = adjust_node;
+                    else
+                        remove_node->parent_->right_ = adjust_node;
+                }
+                if(adjust_node)
+                {
+                    adjust_node->parent_ = remove_node->parent_;
+                    if (remove_node->color_ == BLACK)
+                        removeFixUp(adjust_node, adjust_node->parent_);
+                }
+
+                delete remove_node;
+            } else if(x < node->element_)
+            {
+                remove(x, node->left_);
+            } else {
+                remove(x, node->right_);
+            }
+        }
+
+        void removeFixUp(TreeNode*& current, TreeNode*& parent)
+        {
+            // 空节点也算作黑色节点
+            while((current == nullptr || current->color_ == BLACK) && current != root_)
+            {
+                if(current == parent->left_) // 当前节点是左子节点
+                {
+                    TreeNode* sibling = parent->right_; // 当前节点的兄弟节点
+                    if(sibling && sibling->color_ == RED) // 情况1 兄弟节点存在且是红色
+                    {
+                        sibling->color_ = BLACK;
+                        parent->color_ = RED;
+                        rotateWithRightChild(parent);
+                        sibling = parent->right_;
+                    }
+                    // 情况2 兄弟节点是黑色的（不存在也算黑色），且兄弟的两个子节点也都是黑色的
+                    if((nullptr == sibling) ||
+                       ((nullptr == sibling->left_ || BLACK == sibling->left_->color_) &&
+                        (nullptr == sibling->right_ || BLACK == sibling->right_->color_)))
+                    {
+                        sibling ? sibling->color_ = RED : 0;
+                        current = parent;
+                        parent = current->parent_;
+                    }
+                        // 情况3 兄弟节点是黑色的（不存在也算黑色），兄弟的左子节点红色，右子节点黑色
+                    else {
+                        if(sibling->right_ == nullptr || sibling->right_->color_ == BLACK)
+                        {
+                            sibling->color_ = RED;
+                            if(sibling->left_)
+                            {
+                                sibling->left_->color_ = BLACK;
+                                rotateWithLeftChild(sibling);
+                            }
+                            sibling = parent->right_;
+                        }
+                        //情况4 兄弟节点是黑色的，且兄弟的右子节点是红色，左子节点任意颜色
+                        sibling->color_ = parent->color_;
+                        parent->color_ = BLACK;
+                        sibling->right_->color_ = BLACK;
+                        rotateWithRightChild(parent);
+                        current = root_;
+                    }
+                } else { // 与上部分对称
+                    TreeNode* sibling = parent->left_; // 当前节点的兄弟节点
+                    if(sibling && sibling->color_ == RED) // 情况1 兄弟节点存在且是红色
+                    {
+                        sibling->color_ = BLACK;
+                        parent->color_ = RED;
+                        rotateWithLeftChild(parent);
+                        sibling = parent->left_;
+                    }
+                    // 情况2 兄弟节点是黑色的（不存在也算黑色），且兄弟的两个子节点也都是黑色的
+                    if((nullptr == sibling) ||
+                       ((nullptr == sibling->left_ || BLACK == sibling->left_->color_) &&
+                        (nullptr == sibling->right_ || BLACK == sibling->right_->color_)))
+                    {
+                        sibling ? sibling->color_ = RED : 0;
+                        current = parent;
+                        parent = current->parent_;
+                    }
+                        // 情况3 兄弟节点是黑色的（不存在也算黑色），兄弟的右子节点红色，左子节点黑色
+                    else
+                    {
+                        if (sibling->left_ == nullptr || sibling->left_->color_ == BLACK)
+                        {
+                            sibling->color_ = RED;
+                            if (sibling->right_)
+                            {
+                                sibling->right_->color_ = BLACK;
+                                rotateWithRightChild(sibling);
+                            }
+                            sibling = parent->left_;
+                        }
+                        //情况4 兄弟节点是黑色的，且兄弟的左子节点是红色，右子节点任意颜色
+                        sibling->color_ = parent->color_;
+                        parent->color_ = BLACK;
+                        sibling->left_->color_ = BLACK;
+                        rotateWithLeftChild(parent);
+                        current = root_;
+                    }
+                }
+            }
+            if(current)
+                current->color_ = BLACK;
+        }
     public:
         RedBlackTree()
         : root_{nullptr}
@@ -330,145 +462,12 @@ namespace DS
             remove(x, root_);
         }
 
-        void remove(const Object& x, TreeNode*& node)
-        {
-            if(node == nullptr)
-                return;
-            if(x == node->element_)
-            {
-                TreeNode* remove_node = nullptr;
-                TreeNode* adjust_node = nullptr;
-                if(node->left_ != nullptr && node->right_ != nullptr)
-                {
-                    remove_node = findSuccessor(node);
-                    node->element_ = remove_node->element_;
-                } else {
-                    remove_node = node;
-                }
-
-                if(remove_node->left_)
-                    adjust_node = remove_node->left_;
-                else
-                    adjust_node = remove_node->right_;
-
-                if(nullptr == remove_node->parent_)
-                    root_ = adjust_node;
-                else
-                {
-                    if(remove_node == remove_node->parent_->left_)
-                        remove_node->parent_->left_ = adjust_node;
-                    else
-                        remove_node->parent_->right_ = adjust_node;
-                }
-                if(adjust_node)
-                {
-                    adjust_node->parent_ = remove_node->parent_;
-                    if (remove_node->color_ == BLACK)
-                        removeFixUp(adjust_node, adjust_node->parent_);
-                }
-
-                delete remove_node;
-            } else if(x < node->element_)
-            {
-                remove(x, node->left_);
-            } else {
-                remove(x, node->right_);
-            }
-        }
-
         TreeNode* findSuccessor(TreeNode* node) const
         {
             TreeNode* ptr = node->right_;
             while(ptr->left_)
                 ptr = ptr->left_;
             return ptr;
-        }
-
-        void removeFixUp(TreeNode*& current, TreeNode*& parent)
-        {
-            // 空节点也算作黑色节点
-            while((current == nullptr || current->color_ == BLACK) && current != root_)
-            {
-                if(current == parent->left_) // 当前节点是左子节点
-                {
-                    TreeNode* sibling = parent->right_; // 当前节点的兄弟节点
-                    if(sibling && sibling->color_ == RED) // 情况1 兄弟节点存在且是红色
-                    {
-                        sibling->color_ = BLACK;
-                        parent->color_ = RED;
-                        rotateWithRightChild(parent);
-                        sibling = parent->right_;
-                    }
-                    // 情况2 兄弟节点是黑色的（不存在也算黑色），且兄弟的两个子节点也都是黑色的
-                    if((nullptr == sibling) ||
-                    ((nullptr == sibling->left_ || BLACK == sibling->left_->color_) &&
-                    (nullptr == sibling->right_ || BLACK == sibling->right_->color_)))
-                    {
-                        sibling ? sibling->color_ = RED : 0;
-                        current = parent;
-                        parent = current->parent_;
-                    }
-                    // 情况3 兄弟节点是黑色的（不存在也算黑色），兄弟的左子节点红色，右子节点黑色
-                    else {
-                        if(sibling->right_ == nullptr || sibling->right_->color_ == BLACK)
-                        {
-                            sibling->color_ = RED;
-                            if(sibling->left_)
-                            {
-                                sibling->left_->color_ = BLACK;
-                                rotateWithLeftChild(sibling);
-                            }
-                            sibling = parent->right_;
-                        }
-                        //情况4 兄弟节点是黑色的，且other的右子节点是红色，左子节点任意颜色
-                        sibling->color_ = parent->color_;
-                        parent->color_ = BLACK;
-                        sibling->right_->color_ = BLACK;
-                        rotateWithRightChild(parent);
-                        current = root_;
-                    }
-                } else { // 遇上部分对称
-                    TreeNode* sibling = parent->left_; // 当前节点的兄弟节点
-                    if(sibling && sibling->color_ == RED) // 情况1 兄弟节点存在且是红色
-                    {
-                        sibling->color_ = BLACK;
-                        parent->color_ = RED;
-                        rotateWithLeftChild(parent);
-                        sibling = parent->left_;
-                    }
-                    // 情况2 兄弟节点是黑色的（不存在也算黑色），且兄弟的两个子节点也都是黑色的
-                    if((nullptr == sibling) ||
-                       ((nullptr == sibling->left_ || BLACK == sibling->left_->color_) &&
-                        (nullptr == sibling->right_ || BLACK == sibling->right_->color_)))
-                    {
-                        sibling ? sibling->color_ = RED : 0;
-                        current = parent;
-                        parent = current->parent_;
-                    }
-                    // 情况3 兄弟节点是黑色的（不存在也算黑色），兄弟的左子节点红色，右子节点黑色
-                    else
-                    {
-                        if (sibling->left_ == nullptr || sibling->left_->color_ == BLACK)
-                        {
-                            sibling->color_ = RED;
-                            if (sibling->right_)
-                            {
-                                sibling->right_->color_ = BLACK;
-                                rotateWithRightChild(sibling);
-                            }
-                            sibling = parent->left_;
-                        }
-                        //情况4 兄弟节点是黑色的，且other的右子节点是红色，左子节点任意颜色
-                        sibling->color_ = parent->color_;
-                        parent->color_ = BLACK;
-                        sibling->left_->color_ = BLACK;
-                        rotateWithLeftChild(parent);
-                        current = root_;
-                    }
-                }
-            }
-            if(current)
-                current->color_ = BLACK;
         }
     };
 }
